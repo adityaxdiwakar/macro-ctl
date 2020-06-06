@@ -138,7 +138,7 @@ func handleNewClients(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		for {
-			_, message, err := ws.ReadMessage()
+			_, _, err := ws.ReadMessage()
 			if err != nil {
 				log.Println("There was an error on the socket!")
 				copy(clients[index:], clients[index+1:])
@@ -146,7 +146,6 @@ func handleNewClients(w http.ResponseWriter, r *http.Request) {
 				clients = clients[:len(clients)-1]
 				return
 			}
-			log.Println(message)
 		}
 	}()
 
