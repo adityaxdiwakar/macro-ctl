@@ -82,10 +82,13 @@ func testMessage(w http.ResponseWriter, r *http.Request) {
 func handleAllClients() {
 	for {
 		msg := <-torrent // grab the latest message from the torrent
-		for _, session := range clients {
+		for index, session := range clients {
 			err := session.WriteJSON(msg)
 			if err != nil {
 				log.Printf("Could not send CompInstruction, errored: %v", err)
+				clients[index] = clients[len(clients)-1]
+				clients[len(clients)-1] = nil
+				clients = clients[:len(clients)-1]
 			}
 		}
 	}
