@@ -82,13 +82,10 @@ func testMessage(w http.ResponseWriter, r *http.Request) {
 func handleAllClients() {
 	for {
 		msg := <-torrent // grab the latest message from the torrent
-		for index, session := range clients {
+		for _, session := range clients {
 			err := session.WriteJSON(msg)
 			if err != nil {
 				log.Printf("Could not send CompInstruction, errored: %v", err)
-				clients[index] = clients[len(clients)-1]
-				clients[len(clients)-1] = nil
-				clients = clients[:len(clients)-1]
 			}
 		}
 	}
@@ -133,10 +130,25 @@ func handleNewClients(w http.ResponseWriter, r *http.Request) {
 
 	defer ws.Close()
 
+	index := len(clients)
 	clients = append(clients, ws)
 
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
+
+	go func() {
+		for {
+			_, message, err := ws.ReadMessage()
+			if err != nil {
+				log.Println("There was an error on the socket!")
+				copy(clients[index:], clients[index+1:])
+				clients[len(clients)-1] = nil
+				clients = clients[:len(clients)-1]
+				return
+			}
+			log.Println(message)
+		}
+	}()
 
 	for {
 		select {
