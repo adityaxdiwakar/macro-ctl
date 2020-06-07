@@ -10,3 +10,5 @@ type OKResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
+
+var OK200 = OKResponse{Code: 200, Message: "Received Request"}
