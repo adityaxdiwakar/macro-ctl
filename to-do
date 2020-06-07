@@ -3,11 +3,6 @@ To-Do List for 07 Jun 2020
 Security:
 - Use environment variable for security key
 
-Endpoints:
--> Power on (magic packet)
--> Power off (proxied) 
--> Restart pulse (proxied)
-
 Home Server Component:
 -> Write Go WS Client
 -> Proxy to LAN API
