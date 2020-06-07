@@ -7,6 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+
+	"github.com/joho/godotenv"
 )
 
 // websocket upgrader (http -> ws)
@@ -19,6 +21,9 @@ var torrent = make(chan CompInstruction)
 var clients = []*websocket.Conn{}
 
 func main() {
+	// load environment variables from .env file
+	godotenv.Load()
+
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true
 	}
