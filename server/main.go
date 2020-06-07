@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -66,7 +67,7 @@ func authMiddleware(next http.Handler) http.Handler {
 		}
 
 		authKey := r.URL.Query()["auth"][0]
-		if authKey != "test123" {
+		if authKey != os.Getenv("AUTH_KEY") {
 			log.Println("Error: Authentication not accepted!")
 			w.WriteHeader(http.StatusUnauthorized)
 			response := OKResponse{
