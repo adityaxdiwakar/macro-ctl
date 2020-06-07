@@ -43,7 +43,7 @@ func main() {
 	router.Use(loggingMiddleware)
 	router.Use(authMiddleware)
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe("127.0.0.1:4724", router))
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
