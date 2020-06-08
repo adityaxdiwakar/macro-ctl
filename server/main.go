@@ -36,8 +36,8 @@ func main() {
 	router.HandleFunc("/ws/", handleNewClients)
 
 	// endpoints
-	router.HandleFunc("/instruct/on/", instructOn)
-	router.HandleFunc("/instruct/off/", instructOff)
+	router.HandleFunc("/instruct/on", instructOn)
+	router.HandleFunc("/instruct/off", instructOff)
 	router.HandleFunc("/instruct/pulse", restartPulse)
 
 	router.Use(loggingMiddleware)

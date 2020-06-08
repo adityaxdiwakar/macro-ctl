@@ -10,3 +10,12 @@ Enduser Component (Rust):
 --> /instruct/off (shutdown within 30 seconds
 --> /instruct/pulse (run pulse script)
 -> OS System Handling (running bash scripts)
+
+
+What am I doing?
+Today, I am finishing up a project that I started yesterday which will allow me to use my Google Home to control parts of my computer. This is basically a 3-step process: 
+(1) Google speaks to IFTTT (if this then that)
+(2) IFTTT speaks to my upstream server 
+(3) My upstream server proxies the request to my home server
+(4) My home server proxies the request to my computer
+(5) My computer executes the instruction

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json" // unmarshalling the request
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +14,10 @@ import (
 	"github.com/gorilla/websocket" // import for websocket boilerplate
 	"github.com/joho/godotenv"     // import for .env file
 )
+
+type CompInstruction struct {
+	Type string `json:"type"`
+}
 
 func main() {
 	// load environment variables
@@ -51,8 +56,28 @@ func main() {
 				return
 			}
 			message := string(msg) // cast []byte -> string
-			log.Println("Message was received:", message)
-
+			if message != "[]" {
+				instruction := CompInstruction{}
+				err := json.Unmarshal([]byte(message), &instruction)
+				if err != nil {
+					log.Println("An error occured decoding an instruction:", err)
+					continue
+				}
+				log.Println("The instruction was:", instruction)
+				switch action := instruction.Type; action {
+				case "power_on":
+					err := SendMagicPacket("d8:cb:8a:9f:e5:f9")
+					if err != nil {
+						log.Println("An error occured:", err)
+					}
+				case "power_off":
+					log.Println("The power off action was requested!")
+				case "restart_pulse":
+					log.Println("The restart pulse action was requested!")
+				default:
+					log.Println("The action requested is not known to the client!")
+				}
+			}
 		}
 	}()
 
@@ -73,7 +98,6 @@ func main() {
 				log.Fatal("Write error:", err)
 				return
 			}
-			log.Println("Message was sent: []")
 
 		case <-interrupt:
 			log.Println("Socket interrupted")
