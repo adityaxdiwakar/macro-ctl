@@ -3,5 +3,6 @@
 !*/
 
 *.env
-
-
+client/target/
+Cargo.lock
+**/*.rs.bk
