@@ -1,43 +1,47 @@
 package main
 
 import (
-	"fmt"
-	"github.com/joho/godotenv"
-	"log"
-	"os"
-
 	"flag"
+	"fmt"
+	"log"
 	"net/url"
-	"os/signal"
-	"strings"
+	"os"        // loading environment vars
+	"os/signal" // interrupt signal
+	"strings"   // url string manipulation
+	"time"      // used for ticker (heartbeat)
 
-	"github.com/gorilla/websocket"
-	"time"
+	"github.com/gorilla/websocket" // import for websocket boilerplate
+	"github.com/joho/godotenv"     // import for .env file
 )
 
 func main() {
 	// load environment variables
 	godotenv.Load()
 
+	// load URL from env variable
 	var addr = flag.String("addr", os.Getenv("API_URL"), "http service address")
 	flag.Parse()
 
+	// create interrupt channel (from os.Interrupt)
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
+	// creation of parametrized URL (including authentication from env)
 	u := url.URL{Scheme: os.Getenv("PROTOCOL"), Host: *addr, Path: fmt.Sprintf("/ws/?auth=%s", os.Getenv("AUTH_KEY"))}
 	log.Println("Establishing connection with mainstream server, standby...")
 
+	// dial the websocket and handle errors
 	c, _, err := websocket.DefaultDialer.Dial(strings.Replace(u.String(), "%3F", "?", 1), nil)
 	if err != nil {
 		log.Fatal("Dialup error:", err)
 	} else {
 		log.Printf("Dialup successful with upstream server!")
 	}
-	defer c.Close()
+	defer c.Close() // prevent closure until main() terminates
 
 	done := make(chan struct{})
 
+	// goroutine to handle incoming messages
 	go func() {
 		defer close(done)
 		for {
@@ -52,14 +56,17 @@ func main() {
 		}
 	}()
 
+	// ticker for heartbeat
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
+	// handler for closures, heartbeat, and interrupts
 	for {
 		select {
 		case <-done:
 			log.Fatal("Channel closed")
 			return
+
 		case _ = <-ticker.C:
 			err := c.WriteMessage(websocket.TextMessage, []byte("[]"))
 			if err != nil {
@@ -67,6 +74,7 @@ func main() {
 				return
 			}
 			log.Println("Message was sent: []")
+
 		case <-interrupt:
 			log.Println("Socket interrupted")
 			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))

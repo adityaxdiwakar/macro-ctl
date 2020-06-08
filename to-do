@@ -1,5 +1,12 @@
 To-Do List for 07 Jun 2020
 
-Home Server Component:
+Home Server Component (Go):
 -> Proxy to LAN API
--> Write WoL Component (Go)
+-> Write WoL Component
+
+Enduser Component (Rust):
+-> Rust API (rocket.rs)
+-> Listening on Endpoints
+--> /instruct/off (shutdown within 30 seconds
+--> /instruct/pulse (run pulse script)
+-> OS System Handling (running bash scripts)
