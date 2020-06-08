@@ -32,3 +32,12 @@ func restartPulse(w http.ResponseWriter, r *http.Request) {
 	torrent <- instruction
 	json.NewEncoder(w).Encode(OK200)
 }
+
+func cancelShutdown(w http.ResponseWriter, r *http.Request) {
+	instruction := CompInstruction{
+		Type: "cancel_off",
+	}
+	w.WriteHeader(http.StatusOK)
+	torrent <- instruction
+	json.NewEncoder(w).Encode(OK200)
+}

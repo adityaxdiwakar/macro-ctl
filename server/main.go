@@ -39,6 +39,7 @@ func main() {
 	router.HandleFunc("/instruct/on", instructOn)
 	router.HandleFunc("/instruct/off", instructOff)
 	router.HandleFunc("/instruct/pulse", restartPulse)
+	router.HandleFunc("/instruct/cancel-off", cancelShutdown)
 
 	router.Use(loggingMiddleware)
 	router.Use(authMiddleware)

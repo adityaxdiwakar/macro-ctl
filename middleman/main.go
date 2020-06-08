@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"net/url"
 	"os"        // loading environment vars
 	"os/signal" // interrupt signal
@@ -71,9 +72,21 @@ func main() {
 						log.Println("An error occured:", err)
 					}
 				case "power_off":
-					log.Println("The power off action was requested!")
+					_, err := http.Get("http://192.168.86.254:8000/instruct/off")
+					if err != nil {
+						log.Println("An error occured proxying a shutdown request:", err)
+					}
 				case "restart_pulse":
-					log.Println("The restart pulse action was requested!")
+					_, err := http.Get("http://192.168.86.254:8000/instruct/pulse")
+					if err != nil {
+						log.Println("An error occured proxying a pulseaudio reboot:", err)
+					}
+				case "cancel_off":
+					_, err := http.Get("http://192.168.86.254:8000/instruct/offcancel")
+					if err != nil {
+						log.Println("An error occured proxying a shutdown termination:", err)
+					}
+
 				default:
 					log.Println("The action requested is not known to the client!")
 				}
