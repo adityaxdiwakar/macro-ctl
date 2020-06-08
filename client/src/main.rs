@@ -42,6 +42,20 @@ fn pulse() -> content::Json<std::string::String> {
     content::Json(serde_json::to_string(&resp).unwrap())
 }
 
+#[get("/instruct/offcancel")]
+fn cancel_off() -> content::Json<std::string::String> {
+    Command::new("shutdown")
+        .arg("-c")
+        .spawn()
+        .expect("failed to execute process");
+
+    let resp = Response{
+        code: 200,
+        message: "The request was successfully cancelled!".to_string()
+    };
+    content::Json(serde_json::to_string(&resp).unwrap())
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![off, pulse]).launch();
+    rocket::ignite().mount("/", routes![off, pulse, cancel_off]).launch();
 }
