@@ -24,6 +24,9 @@ func main() {
 	// load environment variables
 	godotenv.Load()
 
+	apiUrl = fmt.Sprintf("http://%s", os.Getenv("API_URL"))
+	macAddress = os.Getenv("MAC_ADDRESS")
+
 	// load URL from env variable
 	var addr = flag.String("addr", os.Getenv("API_URL"), "http service address")
 	flag.Parse()
@@ -67,22 +70,22 @@ func main() {
 				log.Println("The instruction was:", instruction)
 				switch action := instruction.Type; action {
 				case "power_on":
-					err := SendMagicPacket("d8:cb:8a:9f:e5:f9")
+					err := SendMagicPacket(macAddress)
 					if err != nil {
 						log.Println("An error occured:", err)
 					}
 				case "power_off":
-					_, err := http.Get("http://192.168.86.254:8000/instruct/off")
+					_, err := http.Get(apiUrl + "/instruct/off")
 					if err != nil {
 						log.Println("An error occured proxying a shutdown request:", err)
 					}
 				case "restart_pulse":
-					_, err := http.Get("http://192.168.86.254:8000/instruct/pulse")
+					_, err := http.Get(apiUrl + "/instruct/pulse")
 					if err != nil {
 						log.Println("An error occured proxying a pulseaudio reboot:", err)
 					}
 				case "cancel_off":
-					_, err := http.Get("http://192.168.86.254:8000/instruct/offcancel")
+					_, err := http.Get(apiUrl + "/instruct/offcancel")
 					if err != nil {
 						log.Println("An error occured proxying a shutdown termination:", err)
 					}
