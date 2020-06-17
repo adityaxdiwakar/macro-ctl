@@ -24,8 +24,8 @@ func main() {
 	// load environment variables
 	godotenv.Load()
 
-	apiUrl = fmt.Sprintf("http://%s", os.Getenv("API_URL"))
-	macAddress = os.Getenv("MAC_ADDRESS")
+	apiUrl := fmt.Sprintf("http://%s", os.Getenv("API_URL"))
+	macAddress := os.Getenv("MAC_ADDRESS")
 
 	// load URL from env variable
 	var addr = flag.String("addr", os.Getenv("API_URL"), "http service address")
